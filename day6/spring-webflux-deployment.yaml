@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-webflux-app
+  labels:
+    app: spring-webflux
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: spring-webflux
+  template:
+    metadata:
+      labels:
+        app: spring-webflux
+    spec:
+      containers:
+        - name: webflux
+          image: imukh1983/pi-shaped-workshop-indrajeetmukherjee:day1 # <-- replace with your image
+          ports:
+            - containerPort: 8080
+          resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+              - matchExpressions:
+                  - key: kubernetes.io/os
+                    operator: In
+                    values:
+                      - linux
+      tolerations:
+        - key: "dedicated"
+          operator: "Equal"
+          value: "webflux"
+          effect: "NoSchedule"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spring-webflux-service
+spec:
+  selector:
+    app: spring-webflux
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+  type: ClusterIP

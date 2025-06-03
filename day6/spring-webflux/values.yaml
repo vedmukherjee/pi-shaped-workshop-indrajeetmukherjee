@@ -1,0 +1,26 @@
+replicaCount: 2
+
+image:
+  repository: imukh1983/pi-shaped-workshop-indrajeetmukherjee
+  tag: day1
+
+containerPort: 8080
+
+service:
+  type: ClusterIP
+
+ingress:
+  enabled: true
+  host: webflux.local
+  path: /
+  
+serviceAccount:
+  create: false
+  name: ""
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 70
+
